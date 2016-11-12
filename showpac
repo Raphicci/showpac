@@ -1,0 +1,11 @@
+#!/bin/sh
+
+if [ "$1" = "-A" -o "$1" = "-a" -o "$1" = "--all" ]
+then
+    pacman -Qei | awk '/^Name/ { print $3 }'
+elif [ "$1" = "-D" -o "$1" = "-d" -o "$1" = "--description" ]
+then
+    pacman -Qei | awk '/^Name/ { name=$3 } /^Groups/ { group=$3 } /^Description/ { if (group != "base" && group != "base-devel") { print name; for(i=4; i<=NF; i++) printf "%s",$i (i==NF?ORS:OFS); print "" } }'
+else
+     pacman -Qei | awk '/^Name/ { name=$3 } /^Groups/ { if ($3 != "base" && $3 != "base-devel") { print name; } }'
+fi
